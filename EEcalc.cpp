@@ -1,8 +1,29 @@
 #include <iostream>
 #include <cmath>
 #include <unordered_map>
+#include <complex>
+#include <vector>
 
 using namespace std;
+
+const double PI = 3.14159265358979323846;
+
+// Function to calculate the Fourier series coefficients
+vector<complex<double>> calculateFourierCoefficients(const vector<double>& signal) {
+    int N = signal.size();
+    vector<complex<double>> coefficients;
+
+    for (int k = 0; k < N; ++k) {
+        complex<double> sum = 0.0;
+        for (int n = 0; n < N; ++n) {
+            double angle = 2.0 * PI * k * n / N;
+            sum += signal[n] * polar(1.0, -angle);
+        }
+        coefficients.push_back(sum/static_cast<double>(N));
+    }
+
+    return coefficients;
+}
 
 class ElectricalCalculator {
 public:
@@ -109,6 +130,22 @@ public:
         return sourceCurrent * (conductance2 / (conductance1 + conductance2));
     }
 
+    // Fourier Series Calculator
+    static void calculateFourierSeries(const vector<double>& signal, int numHarmonics) {
+        int N = signal.size();
+        vector<complex<double>> coefficients = calculateFourierCoefficients(signal);
+
+        // Display the Fourier series components
+        cout << "Fourier Series Components:\n";
+        for (int k = 0; k <= numHarmonics; ++k) {
+            complex<double> coeff = coefficients[k];
+            double magnitude = abs(coeff);
+            double phase = arg(coeff);
+
+            cout << "Harmonic " << k << ": Magnitude = " << magnitude << ", Phase = " << phase << " radians\n";
+        }
+    }
+
     // Function to display menu and get user choice
     static int getUserChoice() {
         int choice;
@@ -124,6 +161,7 @@ public:
         cout << "9. Three-Phase Power Calculator\n";
         cout << "10. Voltage Divider Calculator\n";
         cout << "11. Current Divider Calculator\n";
+        cout << "12. Fourier Series Calculator\n";
         cout << "0. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
@@ -280,6 +318,25 @@ int main() {
                 cin >> conductance2;
 
                 cout << "Current Through Conductance 2: " << ElectricalCalculator::calculateCurrentDivider(sourceCurrent, conductance1, conductance2) << " A" << endl;
+                break;
+            }
+            case 12: {
+                // Fourier Series Calculator
+                int numHarmonics;
+                cout << "Enter the number of harmonics to compute: ";
+                cin >> numHarmonics;
+                
+                // Get the signal from the user
+                vector<double> signal;
+                cout << "Enter the signal values (space-separated): ";
+                for (int i = 0; i < numHarmonics; ++i) {
+                    double value;
+                    cin >> value;
+                    signal.push_back(value);
+                }
+
+                // Perform Fourier series calculation
+                ElectricalCalculator::calculateFourierSeries(signal, numHarmonics);
                 break;
             }
             case 0:
