@@ -33,3 +33,5 @@ This C++ program serves as an Electrical Engineering Calculator, providing a set
 
 - **Voltage Divider and Current Divider Calculators:**
   - Calculate voltage and current divisions in resistor networks.
+
+- **Fourier Series Calculator**
